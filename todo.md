@@ -1,3 +1,4 @@
 - [x] bring to foreground. 
-- [ ] position by cursor
+- [x] position pie menu by cursor location
 - [ ] buffer rotation
+- [ ] nicyfy graphics

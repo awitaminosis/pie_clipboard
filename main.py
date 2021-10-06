@@ -2,6 +2,7 @@
 #https://stackoverflow.com/questions/48915822/creating-a-hotkey-to-enter-text-using-python-running-in-background-waiting-for
 import tkinter as tk
 import keyboard
+from pynput.mouse import Controller
 
 
 def draw_menu():
@@ -18,10 +19,23 @@ def draw_menu():
     canvas.tag_bind("command2", "<Button-1>",lambda e:shortcut_experiment())
     canvas.pack()
 
+    root = center_position(root)
+
     root.wm_attributes("-transparentcolor", "white", '-topmost', 1)
     root.overrideredirect(True)
 
     root.mainloop()
+
+
+def center_position(root):
+    mouse = Controller()
+    x, y = mouse.position
+    # centrify
+    x -= 250 / 2
+    y -= 250 / 2
+    root.geometry("+%d+%d" % (x, y))
+    return root
+
 
 def buf(root):
     print(root.clipboard_get())
