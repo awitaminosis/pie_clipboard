@@ -18,7 +18,7 @@ def draw_menu():
     canvas.tag_bind("command2", "<Button-1>",lambda e:shortcut_experiment())
     canvas.pack()
 
-    root.wm_attributes("-transparentcolor", "white")
+    root.wm_attributes("-transparentcolor", "white", '-topmost', 1)
     root.overrideredirect(True)
 
     root.mainloop()
