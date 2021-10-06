@@ -12,7 +12,8 @@ def draw_menu():
     circle2 = canvas.create_oval(80,80,180,180,outline="black",fill="white")
     txt = canvas.create_text(170, 50, text='Command 1',angle=48,tag="command1")
     txt = canvas.create_text(70, 50, text='Command 2',angle=88,tag="command2")
-    canvas.tag_bind("command1", "<Button-1>",lambda e:print ("Hi i am command 1"))
+    # canvas.tag_bind("command1", "<Button-1>",lambda e:print ("Hi i am command 1"))
+    canvas.tag_bind("command1", "<Button-1>",lambda e:buf(root))
     # canvas.tag_bind("command2", "<Button-1>",lambda e:print ("Hi i am command 2"))
     canvas.tag_bind("command2", "<Button-1>",lambda e:shortcut_experiment())
     canvas.pack()
@@ -21,6 +22,9 @@ def draw_menu():
     root.overrideredirect(True)
 
     root.mainloop()
+
+def buf(root):
+    print(root.clipboard_get())
 
 
 def shortcut_experiment():

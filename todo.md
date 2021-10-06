@@ -1,0 +1,3 @@
+- [ ] bring to foreground. 
+- [ ] position by cursor
+- [ ] buffer rotation
