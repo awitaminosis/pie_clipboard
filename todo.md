@@ -1,4 +1,7 @@
 - [x] bring to foreground. 
 - [x] position pie menu by cursor location
+- [x] classify
 - [ ] buffer rotation
 - [ ] nicyfy graphics
+- [ ] hide on menu leave
+- [ ] perform buffer action on menu selection 
