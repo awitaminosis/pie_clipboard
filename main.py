@@ -15,6 +15,9 @@ class PieClipboard:
         self.inner_x = 180
         self.inner_y = 180
 
+        self.offset_x = 130
+        self.offset_y = 130
+
         self.r_outer = self.outer_x #todo
         self.r_iner = self.inner_x  #todo
 
@@ -38,10 +41,8 @@ class PieClipboard:
         print("Press ESC to stop.")
         keyboard.wait('esc')
 
-    def on_triggered(self): #define your function to be executed on hot-key press
-        print('1')
+    def on_triggered(self):
         self.draw_menu()
-        print('2')
 
     def draw_menu(self):
         root = tk.Tk()
@@ -69,8 +70,8 @@ class PieClipboard:
         n = -1
 
         for item in self.clipboard_buffer:
-            xpos = 130 + 80 * math.cos(n * alpha)
-            ypos = 130 + 80 * math.sin(n * alpha)
+            xpos = self.offset_x + 80 * math.cos(n * alpha)
+            ypos = self.offset_y + 80 * math.sin(n * alpha)
 
             incline = math.degrees(alpha * n) * -1
             canvas.create_text(xpos, ypos, text=item, angle=incline if n < (len(self.clipboard_buffer)/2) - 1 else 180 + incline, tag="command1")
@@ -95,17 +96,15 @@ class PieClipboard:
         def cb(e):
             mouse = Controller()
             x, y = mouse.position
-            dx = self.center_x - x
-            dy = self.center_y - y
+            dx = self.center_x - x + self.offset_x
+            dy = self.center_y - y + self.offset_y
 
             dr = math.sqrt(dx**2 + dy**2)
-
-            if dr > self.r_outer:  #todo
-                print('out')
+            if dr > 115: # almost to the border
                 root.withdraw()
                 self.left()
 
-        root.bind('<Motion>',cb)
+        root.bind('<Motion>', cb)
         return root
 
     def buf(self, n):

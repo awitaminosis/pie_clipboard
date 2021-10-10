@@ -8,3 +8,4 @@
 - [+/-] hide on menu leave
 - [x] reopen
 - [ ] nicyfy graphics
+- [ ] copy on move?
