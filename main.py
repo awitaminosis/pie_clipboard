@@ -4,6 +4,7 @@ import tkinter as tk
 import keyboard
 import math
 from pynput.mouse import Controller
+import pyperclip
 
 
 class PieClipboard:
@@ -17,20 +18,26 @@ class PieClipboard:
         self.r_outer = self.outer_x #todo
         self.r_iner = self.inner_x  #todo
 
-        self.clipboard_buffer = ['111111',
-                                 '222222',
-                                 '333333',
-                                 '4444444',
-                                 '555555',
-                                 '6666666',
-                                 '7777777',
-                                 '88888',
-                                 '9999999',
-                                 '00000'
+        self.clipboard_buffer = [
+            # '111111',
+            #                      '222222',
+            #                      '333333',
+            #                      '4444444',
+            #                      '555555',
+            #                      '6666666',
+            #                      '7777777',
+            #                      '88888',
+            #                      '9999999',
+            #                      '00000'
                                  ]
 
     def run(self):
+        self.init_copy_to_buffer()
         self.shortcut_experiment()
+
+    def init_copy_to_buffer(self):
+        shortcut = 'ctrl+c'
+        keyboard.add_hotkey(shortcut, lambda: self.clipboard_buffer.append(pyperclip.paste()))  # <-- attach the function to hot-key
 
     def shortcut_experiment(self):
         text_to_print='default_predefined_text'
@@ -116,6 +123,7 @@ class PieClipboard:
         return root
 
     def buf(self, root):
+        # pyperclip.copy('3333x')
         print(root.clipboard_get())
 
 

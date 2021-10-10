@@ -3,7 +3,7 @@
 - [x] classify
 - [x] translate coords from center to corner
 - [x] arbitrary menu length
-- [ ] stash to buffer to menu
+- [x] stash from buffer to menu
 - [ ] copy from menu to buffer
 - [+/-] hide on menu leave
 - [x] reopen
