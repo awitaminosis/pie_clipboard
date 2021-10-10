@@ -1,8 +1,10 @@
 - [x] bring to foreground. 
 - [x] position pie menu by cursor location
 - [x] classify
-- [ ] perform buffer action on menu selection 
+- [x] translate coords from center to corner
+- [x] arbitrary menu length
+- [ ] stash to buffer to menu
+- [ ] copy from menu to buffer
 - [+/-] hide on menu leave
 - [x] reopen
-- [ ] buffer rotation
 - [ ] nicyfy graphics

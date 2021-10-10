@@ -16,7 +16,18 @@ class PieClipboard:
 
         self.r_outer = self.outer_x #todo
         self.r_iner = self.inner_x  #todo
-        pass
+
+        self.clipboard_buffer = ['111111',
+                                 '222222',
+                                 '333333',
+                                 '4444444',
+                                 '555555',
+                                 '6666666',
+                                 '7777777',
+                                 '88888',
+                                 '9999999',
+                                 '00000'
+                                 ]
 
     def run(self):
         self.shortcut_experiment()
@@ -41,15 +52,13 @@ class PieClipboard:
         self.root = root
 
         canvas = tk.Canvas(root, bg="white", bd=0, highlightthickness=0)
-        circle = canvas.create_oval(5, 5, self.outer_x, self.outer_y, outline="black", fill="green")
-        circle2 = canvas.create_oval(80, 80, self.inner_x, self.inner_y, outline="black", fill="white")
-        txt = canvas.create_text(170, 50, text='Command 1', angle=48, tag="command1")
-        txt = canvas.create_text(70, 50, text='Command 2', angle=88, tag="command2")
-        # canvas.tag_bind("command1", "<Button-1>",lambda e:print ("Hi i am command 1"))
-        canvas.tag_bind("command1", "<Button-1>", lambda e: self.buf(root))
-        # caxnvas.tag_bind("command2", "<Button-1>",lambda e:print ("Hi i am command 2"))
-        # canvas.tag_bind("command2", "<Button-1>", lambda e: self.shortcut_experiment())
-        canvas.pack()
+
+        # outer
+        canvas.create_oval(5, 5, self.outer_x, self.outer_y, outline="black", fill="green")
+        # inner
+        canvas.create_oval(80, 80, self.inner_x, self.inner_y, outline="black", fill="white")
+
+        self.populate(canvas)
 
         root = self.center_position(root)
         root = self.monitor_mouse_movement(root)
@@ -58,6 +67,23 @@ class PieClipboard:
         root.overrideredirect(True)
 
         root.mainloop()
+
+    def populate(self, canvas):
+        alpha = 2 * math.pi / len(self.clipboard_buffer)
+        n = -1
+        mouse = Controller()
+        x, y = mouse.position
+
+
+        for item in self.clipboard_buffer:
+            xpos = 130 + 80 * math.cos(n * alpha)
+            ypos = 130 + 80 * math.sin(n * alpha)
+
+            incline = math.degrees(alpha * n) * -1
+            canvas.create_text(xpos, ypos, text=item, angle=incline if n < (len(self.clipboard_buffer)/2) - 1 else 180 + incline, tag="command1")
+            canvas.tag_bind("command1", "<Button-1>", lambda e: self.buf(self.root))
+            n += 1
+        canvas.pack()
 
     def center_position(self, root):
         mouse = Controller()
