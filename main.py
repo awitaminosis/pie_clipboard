@@ -18,18 +18,7 @@ class PieClipboard:
         self.r_outer = self.outer_x #todo
         self.r_iner = self.inner_x  #todo
 
-        self.clipboard_buffer = [
-            # '111111',
-            #                      '222222',
-            #                      '333333',
-            #                      '4444444',
-            #                      '555555',
-            #                      '6666666',
-            #                      '7777777',
-            #                      '88888',
-            #                      '9999999',
-            #                      '00000'
-                                 ]
+        self.clipboard_buffer = ['']
 
     def run(self):
         self.init_copy_to_buffer()
@@ -78,9 +67,6 @@ class PieClipboard:
     def populate(self, canvas):
         alpha = 2 * math.pi / len(self.clipboard_buffer)
         n = -1
-        mouse = Controller()
-        x, y = mouse.position
-
 
         for item in self.clipboard_buffer:
             xpos = 130 + 80 * math.cos(n * alpha)
@@ -88,7 +74,7 @@ class PieClipboard:
 
             incline = math.degrees(alpha * n) * -1
             canvas.create_text(xpos, ypos, text=item, angle=incline if n < (len(self.clipboard_buffer)/2) - 1 else 180 + incline, tag="command1")
-            canvas.tag_bind("command1", "<Button-1>", lambda e: self.buf(self.root))
+            canvas.tag_bind("command1", "<Button-1>", self.buf(n+1))
             n += 1
         canvas.pack()
 
@@ -122,9 +108,8 @@ class PieClipboard:
         root.bind('<Motion>',cb)
         return root
 
-    def buf(self, root):
-        # pyperclip.copy('3333x')
-        print(root.clipboard_get())
+    def buf(self, n):
+        pyperclip.copy(self.clipboard_buffer[n])
 
 
 if __name__ == '__main__':

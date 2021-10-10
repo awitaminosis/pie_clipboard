@@ -4,7 +4,7 @@
 - [x] translate coords from center to corner
 - [x] arbitrary menu length
 - [x] stash from buffer to menu
-- [ ] copy from menu to buffer
+- [x] copy from menu to buffer
 - [+/-] hide on menu leave
 - [x] reopen
 - [ ] nicyfy graphics
