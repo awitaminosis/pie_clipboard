@@ -5,7 +5,7 @@
 - [x] arbitrary menu length
 - [x] stash from buffer to menu
 - [x] copy from menu to buffer
-- [+/-] hide on menu leave
+- [x] hide on menu leave
 - [x] reopen
 - [ ] nicyfy graphics
-- [ ] copy on move?
+- [x] copy on move?

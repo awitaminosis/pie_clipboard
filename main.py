@@ -1,5 +1,5 @@
-#https://stackoverflow.com/questions/57487736/is-there-any-widget-in-tkinter-or-other-gui-modules-to-make-a-pie-menu-that-over#answer-57487898
-#https://stackoverflow.com/questions/48915822/creating-a-hotkey-to-enter-text-using-python-running-in-background-waiting-for
+# https://stackoverflow.com/questions/57487736/is-there-any-widget-in-tkinter-or-other-gui-modules-to-make-a-pie-menu-that-over#answer-57487898
+# https://stackoverflow.com/questions/48915822/creating-a-hotkey-to-enter-text-using-python-running-in-background-waiting-for
 import tkinter as tk
 import keyboard
 import math
@@ -18,10 +18,15 @@ class PieClipboard:
         self.offset_x = 130
         self.offset_y = 130
 
-        self.r_outer = self.outer_x #todo
-        self.r_iner = self.inner_x  #todo
+        self.r_outer = self.outer_x  # todo
+        self.r_iner = self.inner_x  # todo
 
-        self.clipboard_buffer = ['']
+        self.clipboard_buffer = ['111',
+                                 '222',
+                                 '3333',
+                                 '4444',
+                                 '5555'
+                                 ]
 
     def run(self):
         self.init_copy_to_buffer()
@@ -29,14 +34,14 @@ class PieClipboard:
 
     def init_copy_to_buffer(self):
         shortcut = 'ctrl+c'
-        keyboard.add_hotkey(shortcut, lambda: self.clipboard_buffer.append(pyperclip.paste()))  # <-- attach the function to hot-key
+        keyboard.add_hotkey(shortcut, lambda: self.clipboard_buffer.append(
+            pyperclip.paste()))  # <-- attach the function to hot-key
 
     def shortcut_experiment(self):
-        text_to_print='default_predefined_text'
-        shortcut = 'alt+x' #define your hot-key
+        shortcut = 'alt+ctrl'  # define your hot-key
         print('Hotkey set as:', shortcut)
 
-        keyboard.add_hotkey(shortcut, self.on_triggered) #<-- attach the function to hot-key
+        keyboard.add_hotkey(shortcut, self.on_triggered)  # <-- attach the function to hot-key
 
         print("Press ESC to stop.")
         keyboard.wait('esc')
@@ -74,8 +79,13 @@ class PieClipboard:
             ypos = self.offset_y + 80 * math.sin(n * alpha)
 
             incline = math.degrees(alpha * n) * -1
-            canvas.create_text(xpos, ypos, text=item, angle=incline if n < (len(self.clipboard_buffer)/2) - 1 else 180 + incline, tag="command1")
-            canvas.tag_bind("command1", "<Button-1>", self.buf(n+1))
+            canvas.create_text(xpos, ypos, text=item,
+                               angle=incline if n < (len(self.clipboard_buffer) / 2) - 1 else 180 + incline,
+                               tag="command" + str(n))
+
+            canvas.tag_bind("command" + str(n), "<Button-1>", lambda e: self.buf(canvas.itemcget(e.widget.find_withtag('current')[0],'text')))
+            canvas.tag_bind("command" + str(n), "<Enter>", lambda e: self.buf(canvas.itemcget(e.widget.find_withtag('current')[0],'text')))
+
             n += 1
         canvas.pack()
 
@@ -99,16 +109,16 @@ class PieClipboard:
             dx = self.center_x - x + self.offset_x
             dy = self.center_y - y + self.offset_y
 
-            dr = math.sqrt(dx**2 + dy**2)
-            if dr > 115: # almost to the border
+            dr = math.sqrt(dx ** 2 + dy ** 2)
+            if dr > 115:  # almost to the border
                 root.withdraw()
                 self.left()
 
         root.bind('<Motion>', cb)
         return root
 
-    def buf(self, n):
-        pyperclip.copy(self.clipboard_buffer[n])
+    def buf(self, text_to_buffer):
+        pyperclip.copy(text_to_buffer)
 
 
 if __name__ == '__main__':
