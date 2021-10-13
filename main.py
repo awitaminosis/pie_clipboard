@@ -21,12 +21,7 @@ class PieClipboard:
         self.r_outer = self.outer_x  # todo
         self.r_iner = self.inner_x  # todo
 
-        self.clipboard_buffer = ['111',
-                                 '222',
-                                 '3333',
-                                 '4444',
-                                 '5555'
-                                 ]
+        self.clipboard_buffer = ['test1','test2']
 
     def run(self):
         self.init_copy_to_buffer()
@@ -38,7 +33,7 @@ class PieClipboard:
             pyperclip.paste()))  # <-- attach the function to hot-key
 
     def shortcut_experiment(self):
-        shortcut = 'alt+ctrl'  # define your hot-key
+        shortcut = 'win+v'  # define your hot-key
         print('Hotkey set as:', shortcut)
 
         keyboard.add_hotkey(shortcut, self.on_triggered)  # <-- attach the function to hot-key
