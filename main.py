@@ -48,6 +48,7 @@ class PieClipboard:
     def draw_menu(self):
         root = tk.Tk()
         self.root = root
+        root.bind('<Escape>', lambda e: self.left())
 
         canvas = tk.Canvas(root, bg="white", bd=0, highlightthickness=0)
 
@@ -96,6 +97,7 @@ class PieClipboard:
         return root
 
     def left(self):
+        self.root.withdraw()
         self.root.quit()
 
     def monitor_mouse_movement(self, root):
@@ -107,7 +109,6 @@ class PieClipboard:
 
             dr = math.sqrt(dx ** 2 + dy ** 2)
             if dr > 115:  # almost to the border
-                root.withdraw()
                 self.left()
 
         root.bind('<Motion>', cb)
