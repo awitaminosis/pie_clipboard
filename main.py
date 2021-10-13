@@ -21,7 +21,7 @@ class PieClipboard:
         self.r_outer = self.outer_x  # todo
         self.r_iner = self.inner_x  # todo
 
-        self.clipboard_buffer = ['test1','test2']
+        self.clipboard_buffer = []
 
     def run(self):
         self.init_copy_to_buffer()
@@ -42,7 +42,8 @@ class PieClipboard:
         keyboard.wait('esc')
 
     def on_triggered(self):
-        self.draw_menu()
+        if len(self.clipboard_buffer) > 0:
+            self.draw_menu()
 
     def draw_menu(self):
         root = tk.Tk()
