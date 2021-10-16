@@ -7,9 +7,9 @@
 - [x] copy from menu to buffer
 - [x] hide on menu leave
 - [x] reopen
-- [ ] nicyfy graphics
+- [x] nicyfy graphics
 - [x] copy on move?
 - [+/-] esc to close menu w/o copying to buffer
-- [ ] what to do on long lines
+- [x] what to do on long lines
 - [ ] settings file
 - [ ] PEPify

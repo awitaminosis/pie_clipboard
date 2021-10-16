@@ -29,8 +29,7 @@ class PieClipboard:
 
     def init_copy_to_buffer(self):
         shortcut = 'ctrl+c'
-        keyboard.add_hotkey(shortcut, lambda: self.clipboard_buffer.append(
-            pyperclip.paste()))  # <-- attach the function to hot-key
+        keyboard.add_hotkey(shortcut, lambda: self.clipboard_buffer.append(pyperclip.paste()))
 
     def shortcut_experiment(self):
         shortcut = 'win+v'  # define your hot-key
@@ -78,7 +77,9 @@ class PieClipboard:
             incline = math.degrees(alpha * n) * -1
             canvas.create_text(xpos, ypos, text=item,
                                angle=incline if n < (len(self.clipboard_buffer) / 2) - 1 else 180 + incline,
-                               tag="command" + str(n))
+                               tag="command" + str(n),
+                               width=80,
+                               activefill="#0000FF")
 
             canvas.tag_bind("command" + str(n), "<Button-1>", lambda e: self.buf(canvas.itemcget(e.widget.find_withtag('current')[0],'text')))
             canvas.tag_bind("command" + str(n), "<Enter>", lambda e: self.buf(canvas.itemcget(e.widget.find_withtag('current')[0],'text')))
