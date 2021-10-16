@@ -1,10 +1,19 @@
-# https://stackoverflow.com/questions/57487736/is-there-any-widget-in-tkinter-or-other-gui-modules-to-make-a-pie-menu-that-over#answer-57487898
-# https://stackoverflow.com/questions/48915822/creating-a-hotkey-to-enter-text-using-python-running-in-background-waiting-for
-import tkinter as tk
+"""
+pie_clipboard
+
+A pie menu that graphically shows what was in a clipboard with easy selection by mouse movement
+
+howto:
+Start main.py and ctrl+c something.
+Then press win+v to call pie menu.
+To select what you want into buffer just mouse through it.
+"""
+
 import keyboard
 import math
 from pynput.mouse import Controller
 import pyperclip
+import tkinter as tk
 
 
 class PieClipboard:
@@ -18,33 +27,50 @@ class PieClipboard:
         self.offset_x = 130
         self.offset_y = 130
 
-        self.r_outer = self.outer_x  # todo
-        self.r_iner = self.inner_x  # todo
-
         self.clipboard_buffer = []
 
     def run(self):
-        self.init_copy_to_buffer()
-        self.shortcut_experiment()
+        """
+        Entrypoint
+        :return:
+        """
+        self.init_copy_watch()
+        self.init_paste_menu()
 
-    def init_copy_to_buffer(self):
-        shortcut = 'ctrl+c'
-        keyboard.add_hotkey(shortcut, lambda: self.clipboard_buffer.append(pyperclip.paste()))
+    def init_copy_watch(self):
+        """
+        Start to monitor what's in the buffer on "ctrl+c"
+        :return:
+        """
+        keyboard.add_hotkey('ctrl+c', lambda: self.clipboard_buffer.append(pyperclip.paste()))
 
-    def shortcut_experiment(self):
-        shortcut = 'win+v'  # define your hot-key
+    def init_paste_menu(self):
+        """
+        Start to draw pie menu on "win+v"
+        :return:
+        """
+        shortcut = 'win+v'
         print('Hotkey set as:', shortcut)
-
-        keyboard.add_hotkey(shortcut, self.on_triggered)  # <-- attach the function to hot-key
-
+        keyboard.add_hotkey(shortcut, self.maybe_draw_menu)
         print("Press ESC to stop.")
         keyboard.wait('esc')
 
-    def on_triggered(self):
+    def maybe_draw_menu(self):
+        """
+        Draws menu if appropriate
+
+        Checks if there is anything in buffer to show
+        If there is calls for pie menu draw
+        :return:
+        """
         if len(self.clipboard_buffer) > 0:
             self.draw_menu()
 
     def draw_menu(self):
+        """
+        Draws pie menu
+        :return:
+        """
         root = tk.Tk()
         self.root = root
         root.bind('<Escape>', lambda e: self.left())
@@ -67,6 +93,11 @@ class PieClipboard:
         root.mainloop()
 
     def populate(self, canvas):
+        """
+        Populates pie menu with buffer contents
+        :param canvas:
+        :return:
+        """
         alpha = 2 * math.pi / len(self.clipboard_buffer)
         n = -1
 
@@ -81,13 +112,20 @@ class PieClipboard:
                                width=80,
                                activefill="#0000FF")
 
-            canvas.tag_bind("command" + str(n), "<Button-1>", lambda e: self.buf(canvas.itemcget(e.widget.find_withtag('current')[0],'text')))
-            canvas.tag_bind("command" + str(n), "<Enter>", lambda e: self.buf(canvas.itemcget(e.widget.find_withtag('current')[0],'text')))
+            canvas.tag_bind("command" + str(n), "<Button-1>",
+                            lambda e: self.copy_to_clipboard(canvas.itemcget(e.widget.find_withtag('current')[0], 'text')))
+            canvas.tag_bind("command" + str(n), "<Enter>",
+                            lambda e: self.copy_to_clipboard(canvas.itemcget(e.widget.find_withtag('current')[0], 'text')))
 
             n += 1
         canvas.pack()
 
     def center_position(self, root):
+        """
+        Centeres menu on mouse current position
+        :param root:
+        :return:
+        """
         mouse = Controller()
         x, y = mouse.position
         # centrify
@@ -98,11 +136,20 @@ class PieClipboard:
         return root
 
     def left(self):
+        """
+        Closes menu
+        :return:
+        """
         self.root.withdraw()
         self.root.quit()
 
     def monitor_mouse_movement(self, root):
-        def cb(e):
+        """
+        Watches mouse movements, closes menu if mouse left it
+        :param root:
+        :return:
+        """
+        def check_if_mouse_left_menu(e):
             mouse = Controller()
             x, y = mouse.position
             dx = self.center_x - x + self.offset_x
@@ -112,10 +159,15 @@ class PieClipboard:
             if dr > 115:  # almost to the border
                 self.left()
 
-        root.bind('<Motion>', cb)
+        root.bind('<Motion>', check_if_mouse_left_menu)
         return root
 
-    def buf(self, text_to_buffer):
+    def copy_to_clipboard(self, text_to_buffer):
+        """
+        Copy to clipboard menu item text that was selected by mouse movement
+        :param text_to_buffer:
+        :return:
+        """
         pyperclip.copy(text_to_buffer)
 
 

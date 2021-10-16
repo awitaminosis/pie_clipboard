@@ -11,5 +11,5 @@
 - [x] copy on move?
 - [+/-] esc to close menu w/o copying to buffer
 - [x] what to do on long lines
+- [x] PEPify
 - [ ] settings file
-- [ ] PEPify
