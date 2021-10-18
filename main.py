@@ -27,7 +27,7 @@ class PieClipboard:
         self.offset_x = 130
         self.offset_y = 130
 
-        self.clipboard_buffer = []
+        self.clipboard_buffer = dict()
 
     def run(self):
         """
@@ -42,7 +42,15 @@ class PieClipboard:
         Start to monitor what's in the buffer on "ctrl+c"
         :return:
         """
-        keyboard.add_hotkey('ctrl+c', lambda: self.clipboard_buffer.append(pyperclip.paste()))
+        keyboard.add_hotkey('ctrl+c', lambda: self.copy_buffer_contents())
+
+    def copy_buffer_contents(self):
+        """
+        Copies buffer contents to inner dict
+        :return:
+        """
+        buffer_contents = pyperclip.paste()
+        self.clipboard_buffer[hash(buffer_contents)] = buffer_contents
 
     def init_paste_menu(self):
         """
@@ -101,24 +109,43 @@ class PieClipboard:
         alpha = 2 * math.pi / len(self.clipboard_buffer)
         n = -1
 
-        for item in self.clipboard_buffer:
+        for key, item in self.clipboard_buffer.items():
             xpos = self.offset_x + 80 * math.cos(n * alpha)
             ypos = self.offset_y + 80 * math.sin(n * alpha)
 
             incline = math.degrees(alpha * n) * -1
-            canvas.create_text(xpos, ypos, text=item,
+            text_to_display, is_expander_necessary = self.adapt_text_for_display(item)
+            canvas.create_text(xpos, ypos, text=text_to_display,
                                angle=incline if n < (len(self.clipboard_buffer) / 2) - 1 else 180 + incline,
-                               tag="command" + str(n),
+                               tag="cmd_" + str(key),
                                width=80,
                                activefill="#0000FF")
 
-            canvas.tag_bind("command" + str(n), "<Button-1>",
-                            lambda e: self.copy_to_clipboard(canvas.itemcget(e.widget.find_withtag('current')[0], 'text')))
-            canvas.tag_bind("command" + str(n), "<Enter>",
-                            lambda e: self.copy_to_clipboard(canvas.itemcget(e.widget.find_withtag('current')[0], 'text')))
+            canvas.tag_bind("cmd_" + str(key), "<Button-1>",
+                            lambda e: self.copy_to_clipboard(canvas.itemcget(e.widget.find_withtag('current')[0], 'tag')))
+            canvas.tag_bind("cmd_" + str(key), "<Enter>",
+                            lambda e: self.copy_to_clipboard(canvas.itemcget(e.widget.find_withtag('current')[0], 'tag')))
 
             n += 1
         canvas.pack()
+
+    def adapt_text_for_display(self, text_to_display):
+        """
+        makes text-to-display adaptations not to overflow
+        :param text_to_display:
+        :return:
+        """
+        is_expander_necessary = False
+        #long
+        if len(text_to_display) > 10:
+            is_expander_necessary = True
+            return text_to_display[:7] + '...', is_expander_necessary
+        #line breaks
+        if "\n" in text_to_display.index():
+            is_expander_necessary = True
+            return text_to_display.replace("\n",'...'), is_expander_necessary
+        #standard
+            return text_to_display, is_expander_necessary
 
     def center_position(self, root):
         """
@@ -162,13 +189,16 @@ class PieClipboard:
         root.bind('<Motion>', check_if_mouse_left_menu)
         return root
 
-    def copy_to_clipboard(self, text_to_buffer):
+    def copy_to_clipboard(self, tag_for_text_to_buffer):
         """
         Copy to clipboard menu item text that was selected by mouse movement
-        :param text_to_buffer:
+        :param tag_for_text_to_buffer:
         :return:
         """
-        pyperclip.copy(text_to_buffer)
+        text_to_buffer = tag_for_text_to_buffer[len("cmd_"):]
+        text_to_buffer = text_to_buffer[:-len('current ')]
+        text_to_buffer = int(text_to_buffer)
+        pyperclip.copy(self.clipboard_buffer[text_to_buffer])
 
 
 if __name__ == '__main__':

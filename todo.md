@@ -13,3 +13,5 @@
 - [x] what to do on long lines
 - [x] PEPify
 - [ ] settings file
+- [x] long contents / contents with line break
+- [ ] button on long lines to see full content
