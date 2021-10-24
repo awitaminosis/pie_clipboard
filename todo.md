@@ -14,5 +14,5 @@
 - [x] PEPify
 - [x] settings file
 - [x] long contents / contents with line break
-- [ ] button on long lines to see full content
+- [x] button on long lines to see full content
 - [x] run cmds from menu

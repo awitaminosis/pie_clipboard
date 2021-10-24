@@ -17,6 +17,7 @@ import tkinter as tk
 import configparser
 from os.path import exists
 from os import system
+import tkinter.messagebox
 
 class PieClipboard:
     def __init__(self):
@@ -292,10 +293,13 @@ class PieClipboard:
 
     def expand_content(self, full_text):
         """
-        shows full content for long entries
+        Shows full content for long entries
         """
+        full_text = full_text[len("view_"):]
+        full_text = full_text[:-len('current ')]
+        full_text = int(full_text)
 
-        pass
+        tkinter.messagebox.showinfo('Entrie full text', self.clipboard_buffer[full_text])
 
 if __name__ == '__main__':
     pie = PieClipboard()
