@@ -12,6 +12,7 @@
 - [+/-] esc to close menu w/o copying to buffer
 - [x] what to do on long lines
 - [x] PEPify
-- [ ] settings file
+- [x] settings file
 - [x] long contents / contents with line break
 - [ ] button on long lines to see full content
+- [ ] run cmds from menu?

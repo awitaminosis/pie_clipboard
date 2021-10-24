@@ -14,20 +14,45 @@ import math
 from pynput.mouse import Controller
 import pyperclip
 import tkinter as tk
-
+import configparser
+from os.path import exists
 
 class PieClipboard:
     def __init__(self):
-        self.outer_x = 250
-        self.outer_y = 250
+        config = configparser.ConfigParser()
+        if not exists('settings.ini'):
+            self.write_default_settings(config)
 
-        self.inner_x = 180
-        self.inner_y = 180
+        config.read(filenames='settings.ini')
+        geometry = config['GEOMETRY']
+        self.outer_x = int(geometry.get('outer_x'))
+        self.outer_y = int(geometry.get('outer_y'))
 
-        self.offset_x = 130
-        self.offset_y = 130
+        self.inner_x = int(geometry.get('inner_x'))
+        self.inner_y = int(geometry.get('inner_y'))
+
+        self.offset_x = int(geometry.get('offset_x'))
+        self.offset_y = int(geometry.get('offset_y'))
 
         self.clipboard_buffer = dict()
+
+    def write_default_settings(self, config):
+        """
+        writes out a default settings.ini
+        :return:
+        """
+        config['GEOMETRY'] = {
+            'outer_x': 250,
+            'outer_y': 250,
+            'inner_x': 180,
+            'inner_y': 180,
+            'offset_x': 130,
+            'offset_y': 130
+        }
+        config['CMD'] = {}
+
+        with open('settings.ini', 'w') as configfile:
+            config.write(configfile)
 
     def run(self):
         """
@@ -141,11 +166,12 @@ class PieClipboard:
             is_expander_necessary = True
             return text_to_display[:7] + '...', is_expander_necessary
         #line breaks
-        if "\n" in text_to_display.index():
+        if "\n" in text_to_display:
             is_expander_necessary = True
             return text_to_display.replace("\n",'...'), is_expander_necessary
         #standard
-            return text_to_display, is_expander_necessary
+        else:
+            return (text_to_display, is_expander_necessary)
 
     def center_position(self, root):
         """
