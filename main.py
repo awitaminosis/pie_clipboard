@@ -37,6 +37,8 @@ class PieClipboard:
         cmd = config['CMD']
         if cmd:
             self.cmd = cmd
+        else:
+            self.cmd = []
 
         self.clipboard_buffer = dict()
 
