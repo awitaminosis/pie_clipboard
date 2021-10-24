@@ -15,4 +15,4 @@
 - [x] settings file
 - [x] long contents / contents with line break
 - [ ] button on long lines to see full content
-- [ ] run cmds from menu?
+- [x] run cmds from menu

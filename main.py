@@ -16,6 +16,7 @@ import pyperclip
 import tkinter as tk
 import configparser
 from os.path import exists
+from os import system
 
 class PieClipboard:
     def __init__(self):
@@ -33,6 +34,9 @@ class PieClipboard:
 
         self.offset_x = int(geometry.get('offset_x'))
         self.offset_y = int(geometry.get('offset_y'))
+        cmd = config['CMD']
+        if cmd:
+            self.cmd = cmd
 
         self.clipboard_buffer = dict()
 
@@ -44,12 +48,16 @@ class PieClipboard:
         config['GEOMETRY'] = {
             'outer_x': 250,
             'outer_y': 250,
+
             'inner_x': 180,
             'inner_y': 180,
+
             'offset_x': 130,
             'offset_y': 130
         }
-        config['CMD'] = {}
+        config['CMD'] = {
+            "whoami": "whoami"
+        }
 
         with open('settings.ini', 'w') as configfile:
             config.write(configfile)
@@ -96,7 +104,7 @@ class PieClipboard:
         If there is calls for pie menu draw
         :return:
         """
-        if len(self.clipboard_buffer) > 0:
+        if len(self.clipboard_buffer) > 0 or len(self.cmd) > 0:
             self.draw_menu()
 
     def draw_menu(self):
@@ -131,17 +139,35 @@ class PieClipboard:
         :param canvas:
         :return:
         """
-        alpha = 2 * math.pi / len(self.clipboard_buffer)
+        entries_count = len(self.clipboard_buffer)
+        if len(self.cmd) > 0:
+            entries_count += len(self.cmd)
+        alpha = 2 * math.pi / entries_count
         n = -1
 
-        for key, item in self.clipboard_buffer.items():
-            xpos = self.offset_x + 80 * math.cos(n * alpha)
-            ypos = self.offset_y + 80 * math.sin(n * alpha)
+        if self.cmd:
+            for key, item in self.cmd.items():
+                xpos, ypos, incline = self.calculate_geometry_for_entry(n, alpha)
+                canvas.create_text(xpos, ypos, text=item,
+                                   angle=incline if n < (entries_count / 2) - 1 else 180 + incline,
+                                   tag="cmd_" + str(key),
+                                   width=80,
+                                   fill="#FF0000",
+                                   activefill="#0000FF")
 
-            incline = math.degrees(alpha * n) * -1
+                canvas.tag_bind("cmd_" + str(key), "<Button-1>",
+                                lambda e: self.runcmd(
+                                    canvas.itemcget(e.widget.find_withtag('current')[0], 'tag')))
+                canvas.tag_bind("cmd_" + str(key), "<Enter>",
+                                lambda e: self.runcmd(
+                                    canvas.itemcget(e.widget.find_withtag('current')[0], 'tag')))
+                n += 1
+
+        for key, item in self.clipboard_buffer.items():
+            xpos, ypos, incline = self.calculate_geometry_for_entry(n, alpha)
             text_to_display, is_expander_necessary = self.adapt_text_for_display(item)
             canvas.create_text(xpos, ypos, text=text_to_display,
-                               angle=incline if n < (len(self.clipboard_buffer) / 2) - 1 else 180 + incline,
+                               angle=incline if n < (entries_count / 2) - 1 else 180 + incline,
                                tag="cmd_" + str(key),
                                width=80,
                                activefill="#0000FF")
@@ -153,6 +179,29 @@ class PieClipboard:
 
             n += 1
         canvas.pack()
+
+    def calculate_geometry_for_entry(self, n, alpha):
+        """
+        calulates starting point and incline angle for text-to-display
+        :param n:
+        :param alpha:
+        :return:
+        """
+        xpos = self.offset_x + 80 * math.cos(n * alpha)
+        ypos = self.offset_y + 80 * math.sin(n * alpha)
+
+        incline = math.degrees(alpha * n) * -1
+        return xpos, ypos, incline
+
+    def runcmd(self, cmd_to_run):
+        """
+        executes cmdsnippets
+        :param cmd_to_run:
+        :return:
+        """
+        cmd_to_run = cmd_to_run[len("cmd_"):]
+        cmd_to_run = cmd_to_run[:-len('current ')]
+        print(system(cmd_to_run))
 
     def adapt_text_for_display(self, text_to_display):
         """
