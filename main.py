@@ -173,6 +173,19 @@ class PieClipboard:
                                tag="cmd_" + str(key),
                                width=80,
                                activefill="#0000FF")
+            if is_expander_necessary:
+                xpos = self.offset_x + 110 * math.cos(n * alpha)
+                ypos = self.offset_y + 110 * math.sin(n * alpha)
+
+                canvas.create_text(xpos, ypos, text='(?)',
+                                   angle=incline if n < (entries_count / 2) - 1 else 180 + incline,
+                                   tag="view_" + str(key),
+                                   width=80,
+                                   fill='#2222AA',
+                                   activefill="#0000FF")
+                canvas.tag_bind("view_" + str(key), "<Button-1>",
+                                lambda e: self.expand_content(
+                                    canvas.itemcget(e.widget.find_withtag('current')[0], 'tag')))
 
             canvas.tag_bind("cmd_" + str(key), "<Button-1>",
                             lambda e: self.copy_to_clipboard(canvas.itemcget(e.widget.find_withtag('current')[0], 'tag')))
@@ -277,6 +290,12 @@ class PieClipboard:
         text_to_buffer = int(text_to_buffer)
         pyperclip.copy(self.clipboard_buffer[text_to_buffer])
 
+    def expand_content(self, full_text):
+        """
+        shows full content for long entries
+        """
+
+        pass
 
 if __name__ == '__main__':
     pie = PieClipboard()
