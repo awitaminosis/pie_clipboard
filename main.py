@@ -26,6 +26,10 @@ class PieClipboard:
             self.write_default_settings(config)
 
         config.read(filenames='settings.ini')
+
+        settings = config['SETTINGS']
+        self.max_items = int(settings.get('max_items'))
+
         geometry = config['GEOMETRY']
         self.outer_x = int(geometry.get('outer_x'))
         self.outer_y = int(geometry.get('outer_y'))
@@ -48,6 +52,7 @@ class PieClipboard:
         writes out a default settings.ini
         :return:
         """
+        config['SETTINGS'] = {'max_items': 12}
         config['GEOMETRY'] = {
             'outer_x': 250,
             'outer_y': 250,
@@ -85,8 +90,9 @@ class PieClipboard:
         Copies buffer contents to inner dict
         :return:
         """
-        buffer_contents = pyperclip.paste()
-        self.clipboard_buffer[hash(buffer_contents)] = buffer_contents
+        if len(self.clipboard_buffer) <= self.max_items:
+            buffer_contents = pyperclip.paste()
+            self.clipboard_buffer[hash(buffer_contents)] = buffer_contents
 
     def init_paste_menu(self):
         """
@@ -217,7 +223,7 @@ class PieClipboard:
         """
         cmd_to_run = cmd_to_run[len("cmd_"):]
         cmd_to_run = cmd_to_run[:-len('current ')]
-        print(system(cmd_to_run))
+        system(cmd_to_run)
 
     def adapt_text_for_display(self, text_to_display):
         """
