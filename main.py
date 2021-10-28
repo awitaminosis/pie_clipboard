@@ -64,7 +64,9 @@ class PieClipboard:
             'offset_y': 130
         }
         config['CMD'] = {
-            "whoami": "whoami"
+            "i am": "whoami",
+            "notepad": "notepad",
+            "firefox": "firefox"
         }
 
         with open('settings.ini', 'w') as configfile:
@@ -215,15 +217,15 @@ class PieClipboard:
         incline = math.degrees(alpha * n) * -1
         return xpos, ypos, incline
 
-    def runcmd(self, cmd_to_run):
+    def runcmd(self, cmd_key):
         """
         executes cmdsnippets
-        :param cmd_to_run:
+        :param cmd_key:
         :return:
         """
-        cmd_to_run = cmd_to_run[len("cmd_"):]
-        cmd_to_run = cmd_to_run[:-len('current ')]
-        system(cmd_to_run)
+        cmd_key = cmd_key[len("cmd_"):]
+        cmd_key = cmd_key[:-len('current ')]
+        system(self.cmd[cmd_key])
 
     def adapt_text_for_display(self, text_to_display):
         """
