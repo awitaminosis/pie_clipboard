@@ -159,7 +159,7 @@ class PieClipboard:
         if self.cmd:
             for key, item in self.cmd.items():
                 xpos, ypos, incline = self.calculate_geometry_for_entry(n, alpha)
-                canvas.create_text(xpos, ypos, text=item,
+                canvas.create_text(xpos, ypos, text=key,
                                    angle=incline if n < (entries_count / 2) - 1 else 180 + incline,
                                    tag="cmd_" + str(key),
                                    width=80,

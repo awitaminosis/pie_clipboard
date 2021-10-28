@@ -16,3 +16,4 @@
 - [x] long contents / contents with line break
 - [x] button on long lines to see full content
 - [x] run cmds from menu
+- [ ] fix text rotation
