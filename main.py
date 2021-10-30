@@ -154,13 +154,13 @@ class PieClipboard:
         if len(self.cmd) > 0:
             entries_count += len(self.cmd)
         alpha = 2 * math.pi / entries_count
-        n = -1
+        n = 0
 
         if self.cmd:
             for key, item in self.cmd.items():
                 xpos, ypos, incline = self.calculate_geometry_for_entry(n, alpha)
                 canvas.create_text(xpos, ypos, text=key,
-                                   angle=incline if n < (entries_count / 2) - 1 else 180 + incline,
+                                   angle=incline,
                                    tag="cmd_" + str(key),
                                    width=80,
                                    fill="#FF0000",
@@ -178,7 +178,7 @@ class PieClipboard:
             xpos, ypos, incline = self.calculate_geometry_for_entry(n, alpha)
             text_to_display, is_expander_necessary = self.adapt_text_for_display(item)
             canvas.create_text(xpos, ypos, text=text_to_display,
-                               angle=incline if n < (entries_count / 2) - 1 else 180 + incline,
+                               angle=incline,
                                tag="cmd_" + str(key),
                                width=80,
                                activefill="#0000FF")
@@ -187,7 +187,7 @@ class PieClipboard:
                 ypos = self.offset_y + 110 * math.sin(n * alpha)
 
                 canvas.create_text(xpos, ypos, text='(?)',
-                                   angle=incline if n < (entries_count / 2) - 1 else 180 + incline,
+                                   angle=incline,
                                    tag="view_" + str(key),
                                    width=80,
                                    fill='#2222AA',
@@ -214,7 +214,11 @@ class PieClipboard:
         xpos = self.offset_x + 80 * math.cos(n * alpha)
         ypos = self.offset_y + 80 * math.sin(n * alpha)
 
-        incline = math.degrees(alpha * n) * -1
+        angl = math.degrees(alpha * n)
+        if angl > 90 and angl < 270:
+            angl -= 180
+        incline = angl * -1
+
         return xpos, ypos, incline
 
     def runcmd(self, cmd_key):
@@ -226,6 +230,7 @@ class PieClipboard:
         cmd_key = cmd_key[len("cmd_"):]
         cmd_key = cmd_key[:-len('current ')]
         system(self.cmd[cmd_key])
+        self.left()
 
     def adapt_text_for_display(self, text_to_display):
         """
@@ -298,6 +303,7 @@ class PieClipboard:
         text_to_buffer = text_to_buffer[:-len('current ')]
         text_to_buffer = int(text_to_buffer)
         pyperclip.copy(self.clipboard_buffer[text_to_buffer])
+        self.left()
 
     def expand_content(self, full_text):
         """
